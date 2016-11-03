@@ -3,6 +3,7 @@
 namespace Bbq\Filter\Block;
 
 
+use Magento\Catalog\Model\ProductFactory;
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Framework\View\Element\Template;
 
@@ -10,11 +11,14 @@ class Product extends Template
 {
     protected  $_attributeCollectionFactory;
 
+    protected  $_productFactory;
+
     protected $_params ;
 
-    public function __construct(Template\Context $context,  \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory, array $data)
+    public function __construct(Template\Context $context,  \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory, ProductFactory $productFactory,  array $data)
     {
         $this->_attributeCollectionFactory = $collectionFactory;
+        $this->_productFactory = $productFactory;
 
         $this->_params = $context->getRequest()->getParams();
         parent::__construct($context, $data);
@@ -51,6 +55,24 @@ class Product extends Template
     }
 
     public function getProducts(){
+
+        $collection = $this->_productFactory->create()->getCollection();
+
+        if (count($this->_params)){
+            foreach ($this->_params as $key => $value) {
+                if ($value){
+                    $collection->addAttributeToFilter($key, ['eq', $value]);
+                }
+            }
+        }else{
+            /** to do add default  */
+        }
+
+        $products = $collection->getItems();
+
+        return $products;
+
+
 
     }
 
