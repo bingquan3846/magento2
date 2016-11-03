@@ -1,0 +1,33 @@
+
+
+<form action="<?php echo $block->getUrl('filter/index') ?>" method="get">
+<?php
+/** @var $block Bbq\Filter\Block\Product */
+$attributes = $block->getAllAttributes();
+
+foreach ($attributes as $attribute) {
+ echo $attribute['label'];
+
+ echo "<select name='$attribute[code]'>";
+
+    foreach ($attribute['options'] as $option){
+        /** @var $option Magento\Eav\Model\Entity\Attribute\Option */
+        if (empty($option->getValue())){
+            echo "<option value='0' > please Select </option>";
+        } else {
+            $selected = '';
+            if ($block->isSelected($attribute['code'],$option->getValue())){
+                $selected = 'selected';
+            }
+            echo "<option value='" . $option->getValue() . "' $selected>" . $option->getLabel() . "</option>";
+        }
+
+    }
+
+ echo "</select>";
+}
+
+?>
+
+<input type="submit" value="search" />
+</form>
